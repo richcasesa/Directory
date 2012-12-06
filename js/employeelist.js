@@ -65,6 +65,7 @@ function populateDB(tx) {
 		"cellPhone VARCHAR(30), " +
 		"email VARCHAR(30), " +
 		"picture VARCHAR(200))";
+    alert("Running: " + sql);
     tx.executeSql(sql);
 
     tx.executeSql("INSERT INTO employee (id,firstName,lastName,managerId,title,department,officePhone,cellPhone,email,city,picture) VALUES (12,'Steven','Wells',4,'Software Architect','Engineering','617-000-0012','781-000-0012','swells@fakemail.com','Boston, MA','steven_wells.jpg')");
