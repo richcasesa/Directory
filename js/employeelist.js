@@ -2,15 +2,17 @@ var db;
 var dbCreated = false;
 
 var scroll = new iScroll('wrapper', { vScrollbar: false, hScrollbar:false, hScroll: false });
+alert('in employeelist');
 
 document.addEventListener("deviceready", onDeviceReady, false);
 
 function onDeviceReady() {
+    alert('in onDeviceReady');
     db = window.openDatabase("EmployeeDirectoryDB", "1.0", "PhoneGap Demo", 200000);
     if (dbCreated)
-    	db.transaction(getEmployees, transaction_error);
+        db.transaction(getEmployees, transaction_error);
     else
-    	db.transaction(populateDB, transaction_error, populateDB_success);
+        db.transaction(populateDB, transaction_error, populateDB_success);
 }
 
 function transaction_error(tx, error) {
@@ -34,7 +36,7 @@ function getEmployees_success(tx, results) {
 	$('#busy').hide();
     var len = results.rows.length;
     for (var i=0; i<len; i++) {
-    	var employee = results.rows.item(i);
+        var employee = results.rows.item(i);
 		$('#employeeList').append('<li><a href="employeedetails.html?id=' + employee.id + '">' +
 				'<img src="pics/' + employee.picture + '" class="list-icon"/>' +
 				'<p class="line1">' + employee.firstName + ' ' + employee.lastName + '</p>' +
