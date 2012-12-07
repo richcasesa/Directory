@@ -9,12 +9,14 @@ document.addEventListener("deviceready", onDeviceReady, false);
 function onDeviceReady() {
     alert('in onDeviceReady');
     db = window.openDatabase("EmployeeDirectoryDB", "1.0", "PhoneGap Demo", 200000);
-    if (dbCreated)
+    if (dbCreated) {
         alert('calling getEmployees');
         db.transaction(getEmployees, transaction_error);
-    else
+    }
+    else {
         alert('calling populateDB');
         db.transaction(populateDB, transaction_error, populateDB_success);
+    }
 }
 
 function transaction_error(tx, error) {
