@@ -10,8 +10,10 @@ function onDeviceReady() {
     alert('in onDeviceReady');
     db = window.openDatabase("EmployeeDirectoryDB", "1.0", "PhoneGap Demo", 200000);
     if (dbCreated)
+        alert('calling getEmployees');
         db.transaction(getEmployees, transaction_error);
     else
+        alert('calling populateDB');
         db.transaction(populateDB, transaction_error, populateDB_success);
 }
 
