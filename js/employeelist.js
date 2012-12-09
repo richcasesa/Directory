@@ -54,8 +54,11 @@ function getEmployees_success(tx, results) {
 }
 
 function populateDB(tx) {
-	$('#busy').show();
+	alert('showing busy');
+    $('#busy').show();
+    alert('dropping table if exists');
 	tx.executeSql('DROP TABLE IF EXISTS employee');
+    alert('setting sql');
 	var sql = 
 		"CREATE TABLE IF NOT EXISTS employee ( "+
 		"id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -71,7 +74,8 @@ function populateDB(tx) {
 		"picture VARCHAR(200))";
     alert("Running: " + sql);
     tx.executeSql(sql);
-
+    alert('inserting employees');
+    
     tx.executeSql("INSERT INTO employee (id,firstName,lastName,managerId,title,department,officePhone,cellPhone,email,city,picture) VALUES (12,'Steven','Wells',4,'Software Architect','Engineering','617-000-0012','781-000-0012','swells@fakemail.com','Boston, MA','steven_wells.jpg')");
     tx.executeSql("INSERT INTO employee (id,firstName,lastName,managerId,title,department,officePhone,cellPhone,email,city,picture) VALUES (11,'Amy','Jones',5,'Sales Representative','Sales','617-000-0011','781-000-0011','ajones@fakemail.com','Boston, MA','amy_jones.jpg')");
     tx.executeSql("INSERT INTO employee (id,firstName,lastName,managerId,title,department,officePhone,cellPhone,email,city,picture) VALUES (10,'Kathleen','Byrne',5,'Sales Representative','Sales','617-000-0010','781-000-0010','kbyrne@fakemail.com','Boston, MA','kathleen_byrne.jpg')");
