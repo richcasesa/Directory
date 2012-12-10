@@ -76,6 +76,7 @@ function populateDB(tx) {
 
 function onDeviceReady() {
     //alert('Cordova Ready');
+    alert('dbCreated = ' + dbCreated);
     db = window.openDatabase("DirectoryDB", "1.0", "Directory", 400000);
     if (!dbCreated) {
         alert('Populating Database');
