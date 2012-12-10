@@ -18,6 +18,8 @@ function transaction_error(tx, error) {
 
 function populateDB_success() {
 	dbJustCreated = true;
+    alert('Try loading Employees after loading employees');
+    db.transaction(getEmployees, getEmployees_error);
 }
 
 function getEmployees(tx) {
@@ -41,6 +43,7 @@ function getEmployees_success(tx, results) {
 	setTimeout(function(){
 		scroll.refresh();
 	},100);
+    db = null;
 }
 
 function populateDB(tx) {
@@ -83,13 +86,12 @@ function onDeviceReady() {
     db.transaction(getEmployees, getEmployees_error);
 
     alert('after attempt to load employees');
+/*
     if (dbJustCreated) {
         alert('Try loading Employees again');
         db.transaction(getEmployees, getEmployees_error);
     }
-
-    //alert('Closing db');
-    db = null;
+*/
 }
 
 document.addEventListener("deviceready", onDeviceReady, false);
