@@ -43,9 +43,9 @@ function getEmployees_success(tx, results) {
 
 function populateDB(tx) {
     $('#busy').show();
-    //alert('dropping table if exists');
+    alert('dropping table if exists');
     //tx.executeSql('DROP TABLE IF EXISTS DEMO');
-	//tx.executeSql('DROP TABLE IF EXISTS employee');
+	tx.executeSql('DROP TABLE IF EXISTS employee');
 	var sql = 
 		"CREATE TABLE IF NOT EXISTS employee ( "+
 		"id INTEGER PRIMARY KEY AUTOINCREMENT, " +
