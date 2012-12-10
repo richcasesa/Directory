@@ -39,10 +39,10 @@ function getEmployees_success(tx, results) {
 }
 
 function populateDB(tx) {
-	alert('showing busy');
     $('#busy').show();
-    alert('dropping table if exists');
-	tx.executeSql('DROP TABLE IF EXISTS employee');
+    //alert('dropping table if exists');
+    //tx.executeSql('DROP TABLE IF EXISTS DEMO');
+	//tx.executeSql('DROP TABLE IF EXISTS employee');
     alert('setting sql');
 	var sql = 
 		"CREATE TABLE IF NOT EXISTS employee ( "+
@@ -76,14 +76,14 @@ function populateDB(tx) {
 }
 
 function onDeviceReady() {
-    alert('in onDeviceReady');
+    alert('Cordova Ready');
     db = window.openDatabase("DirectoryDB", "1.0", "Directory", 400000);
     if (dbCreated) {
         alert('calling getEmployees');
         db.transaction(getEmployees, transaction_error);
     }
     else {
-        alert('calling populateDB');
+        alert('Populating Database');
         db.transaction(populateDB, transaction_error, populateDB_success);
     }
 }
