@@ -15,7 +15,7 @@ function populateDB_success() {
 }
 
 function getEmployees(tx) {
-    alert('in get employees');
+    //alert('in get employees');
 	var sql = "select e.id, e.firstName, e.lastName, e.title, e.picture, count(r.id) reportCount " + 
 				"from employee e left join employee r on r.managerId = e.id " +
 				"group by e.id order by e.lastName, e.firstName";
@@ -24,7 +24,7 @@ function getEmployees(tx) {
 
 function getEmployees_success(tx, results) {
 	$('#busy').hide();
-    alert('in employees success');
+    //alert('in employees success');
     var len = results.rows.length;
     for (var i=0; i<len; i++) {
         var employee = results.rows.item(i);
@@ -58,7 +58,7 @@ function populateDB(tx) {
 		"picture VARCHAR(200))";
     alert("Creating table");
     tx.executeSql(sql);
-    alert('Loading Employees');
+    alert('Adding Employees');
     
     tx.executeSql("INSERT INTO employee (id,firstName,lastName,managerId,title,department,officePhone,cellPhone,email,city,picture) VALUES (12,'Steven','Wells',4,'Software Architect','Engineering','617-000-0012','781-000-0012','swells@fakemail.com','Boston, MA','steven_wells.jpg')");
     tx.executeSql("INSERT INTO employee (id,firstName,lastName,managerId,title,department,officePhone,cellPhone,email,city,picture) VALUES (11,'Amy','Jones',5,'Sales Representative','Sales','617-000-0011','781-000-0011','ajones@fakemail.com','Boston, MA','amy_jones.jpg')");
@@ -75,15 +75,15 @@ function populateDB(tx) {
 }
 
 function onDeviceReady() {
-    alert('Cordova Ready');
+    //alert('Cordova Ready');
     db = window.openDatabase("DirectoryDB", "1.0", "Directory", 400000);
     if (!dbCreated) {
         alert('Populating Database');
         db.transaction(populateDB, transaction_error, populateDB_success);
     }
-    alert('calling getEmployees');
+    alert('Loading Employees');
     db.transaction(getEmployees, transaction_error);
-    alert('Closing db');
+    //alert('Closing db');
     db = null;
 }
 
