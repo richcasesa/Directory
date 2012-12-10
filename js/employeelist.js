@@ -38,7 +38,7 @@ function getEmployees_success(tx, results) {
 	setTimeout(function(){
 		scroll.refresh();
 	},100);
-	db = null;
+	//db = null;
 }
 
 function populateDB(tx) {
@@ -88,6 +88,8 @@ function onDeviceReady() {
         alert('Populating Database');
         db.transaction(populateDB, transaction_error, populateDB_success);
     }
+    alert('Closing db');
+    db = null;
 }
 
 document.addEventListener("deviceready", onDeviceReady, false);
