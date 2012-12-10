@@ -1,5 +1,5 @@
 var db;
-var dbCreated = false;
+var dbJustCreated = false;
     
 var scroll = new iScroll('wrapper', { vScrollbar: false, hScrollbar:false, hScroll: false });
 
@@ -17,12 +17,10 @@ function transaction_error(tx, error) {
 }
 
 function populateDB_success() {
-	dbCreated = true;
-    //db.transaction(getEmployees, transaction_error);
+	dbJustCreated = true;
 }
 
 function getEmployees(tx) {
-    //alert('in get employees');
 	var sql = "select e.id, e.firstName, e.lastName, e.title, e.picture, count(r.id) reportCount " + 
 				"from employee e left join employee r on r.managerId = e.id " +
 				"group by e.id order by e.lastName, e.firstName";
@@ -31,7 +29,6 @@ function getEmployees(tx) {
 
 function getEmployees_success(tx, results) {
 	$('#busy').hide();
-    //alert('in employees success');
     var len = results.rows.length;
     for (var i=0; i<len; i++) {
         var employee = results.rows.item(i);
@@ -44,7 +41,6 @@ function getEmployees_success(tx, results) {
 	setTimeout(function(){
 		scroll.refresh();
 	},100);
-	//db = null;
 }
 
 function populateDB(tx) {
@@ -82,19 +78,15 @@ function populateDB(tx) {
 }
 
 function onDeviceReady() {
-    //alert('Cordova Ready');
-    //alert('dbCreated = ' + dbCreated);
     db = window.openDatabase("DirectoryDB", "1.0", "Directory", 400000);
     alert('Loading Employees');
     db.transaction(getEmployees, getEmployees_error);
-/*
-    if (dbCreated) {
-        alert('Populating Database');
-        db.transaction(populateDB, transaction_error, populateDB_success);
+
+    if (dbJustCreated) {
+        alert('Try loading Employees again');
+        db.transaction(getEmployees, getEmployees_error);
     }
-    alert('Loading Employees after populating');
-    db.transaction(getEmployees, transaction_error);
-*/
+
     //alert('Closing db');
     db = null;
 }
