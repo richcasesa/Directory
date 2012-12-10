@@ -12,7 +12,7 @@ function transaction_error(tx, error) {
 function populateDB_success() {
 	dbCreated = true;
     alert('Employees loaded successfully');
-    db.transaction(getEmployees, transaction_error);
+    //db.transaction(getEmployees, transaction_error);
 }
 
 function getEmployees(tx) {
@@ -80,14 +80,12 @@ function populateDB(tx) {
 function onDeviceReady() {
     alert('Cordova Ready');
     db = window.openDatabase("DirectoryDB", "1.0", "Directory", 400000);
-    if (dbCreated) {
-        alert('calling getEmployees');
-        db.transaction(getEmployees, transaction_error);
-    }
-    else {
+    if (!dbCreated) {
         alert('Populating Database');
         db.transaction(populateDB, transaction_error, populateDB_success);
     }
+    alert('calling getEmployees');
+    db.transaction(getEmployees, transaction_error);
     alert('Closing db');
     db = null;
 }
