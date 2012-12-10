@@ -1,27 +1,12 @@
 var db;
 var dbCreated = false;
-
+    
 var scroll = new iScroll('wrapper', { vScrollbar: false, hScrollbar:false, hScroll: false });
-alert('in employeelist');
-
-document.addEventListener("deviceready", onDeviceReady, false);
-
-function onDeviceReady() {
-    alert('in onDeviceReady');
-    db = window.openDatabase("EmployeeDirectoryDB", "1.0", "PhoneGap Demo", 200000);
-    if (dbCreated) {
-        alert('calling getEmployees');
-        db.transaction(getEmployees, transaction_error);
-    }
-    else {
-        alert('calling populateDB');
-        db.transaction(populateDB, transaction_error, populateDB_success);
-    }
-}
 
 function transaction_error(tx, error) {
 	$('#busy').hide();
     alert("Database Error: " + error);
+    alert('Error Code: ' + error.code);
 }
 
 function populateDB_success() {
@@ -89,3 +74,18 @@ function populateDB(tx) {
     tx.executeSql("INSERT INTO employee (id,firstName,lastName,managerId,title,department,officePhone,cellPhone,email,city,picture) VALUES (2,'Julie','Taylor',1,'VP of Marketing','Marketing','617-000-0002','781-000-0002','jtaylor@fakemail.com','Boston, MA','julie_taylor.jpg')");
     tx.executeSql("INSERT INTO employee (id,firstName,lastName,managerId,title,department,officePhone,cellPhone,email,city,picture) VALUES (1,'James','King',0,'President and CEO','Corporate','617-000-0001','781-000-0001','jking@fakemail.com','Boston, MA','james_king.jpg')");
 }
+
+function onDeviceReady() {
+    alert('in onDeviceReady');
+    db = window.openDatabase("DirectoryDB", "1.0", "Directory", 400000);
+    if (dbCreated) {
+        alert('calling getEmployees');
+        db.transaction(getEmployees, transaction_error);
+    }
+    else {
+        alert('calling populateDB');
+        db.transaction(populateDB, transaction_error, populateDB_success);
+    }
+}
+
+document.addEventListener("deviceready", onDeviceReady, false);
