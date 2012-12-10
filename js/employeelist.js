@@ -87,13 +87,14 @@ function onDeviceReady() {
     db = window.openDatabase("DirectoryDB", "1.0", "Directory", 400000);
     alert('Loading Employees before populating');
     db.transaction(getEmployees, getEmployees_error);
-
+/*
     if (dbCreated) {
         alert('Populating Database');
         db.transaction(populateDB, transaction_error, populateDB_success);
     }
     alert('Loading Employees after populating');
     db.transaction(getEmployees, transaction_error);
+*/
     //alert('Closing db');
     db = null;
 }
