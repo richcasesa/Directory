@@ -5,8 +5,8 @@ var scroll = new iScroll('wrapper', { vScrollbar: false, hScrollbar:false, hScro
 
 function getEmployees_error(tx, error) {
     $('#busy').hide();
-    alert("Database Error: " + error);
-    alert('Populating Database');
+    alert("Error reading db: " + error);
+    alert('Recreating Database');
     db.transaction(populateDB, transaction_error, populateDB_success);
 }
 
@@ -63,7 +63,7 @@ function populateDB(tx) {
 		"cellPhone VARCHAR(30), " +
 		"email VARCHAR(30), " +
 		"picture VARCHAR(200))";
-    alert("Creating table");
+    //alert("Creating table");
     tx.executeSql(sql);
     alert('Adding Employees');
     
@@ -83,9 +83,9 @@ function populateDB(tx) {
 
 function onDeviceReady() {
     //alert('Cordova Ready');
-    alert('dbCreated = ' + dbCreated);
+    //alert('dbCreated = ' + dbCreated);
     db = window.openDatabase("DirectoryDB", "1.0", "Directory", 400000);
-    alert('Loading Employees before populating');
+    alert('Loading Employees');
     db.transaction(getEmployees, getEmployees_error);
 /*
     if (dbCreated) {
