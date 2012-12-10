@@ -3,6 +3,13 @@ var dbCreated = false;
     
 var scroll = new iScroll('wrapper', { vScrollbar: false, hScrollbar:false, hScroll: false });
 
+function getEmployees_error(tx, error) {
+    $('#busy').hide();
+    alert("Database Error: " + error);
+    alert('Populating Database');
+    db.transaction(populateDB, transaction_error, populateDB_success);
+}
+
 function transaction_error(tx, error) {
 	$('#busy').hide();
     alert("Database Error: " + error);
@@ -79,9 +86,9 @@ function onDeviceReady() {
     alert('dbCreated = ' + dbCreated);
     db = window.openDatabase("DirectoryDB", "1.0", "Directory", 400000);
     alert('Loading Employees before populating');
-    db.transaction(getEmployees, transaction_error);
+    db.transaction(getEmployees, getEmployees_error);
 
-    if (!dbCreated) {
+    if (dbCreated) {
         alert('Populating Database');
         db.transaction(populateDB, transaction_error, populateDB_success);
     }
