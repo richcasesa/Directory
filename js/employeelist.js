@@ -11,10 +11,12 @@ function transaction_error(tx, error) {
 
 function populateDB_success() {
 	dbCreated = true;
+    alert('Employees loaded successfully');
     db.transaction(getEmployees, transaction_error);
 }
 
 function getEmployees(tx) {
+    alert('in get employees')''
 	var sql = "select e.id, e.firstName, e.lastName, e.title, e.picture, count(r.id) reportCount " + 
 				"from employee e left join employee r on r.managerId = e.id " +
 				"group by e.id order by e.lastName, e.firstName";
@@ -23,6 +25,7 @@ function getEmployees(tx) {
 
 function getEmployees_success(tx, results) {
 	$('#busy').hide();
+    alert('in employees success');
     var len = results.rows.length;
     for (var i=0; i<len; i++) {
         var employee = results.rows.item(i);
