@@ -11,7 +11,6 @@ function transaction_error(tx, error) {
 
 function populateDB_success() {
 	dbCreated = true;
-    alert('Employees loaded successfully');
     //db.transaction(getEmployees, transaction_error);
 }
 
@@ -43,8 +42,6 @@ function getEmployees_success(tx, results) {
 
 function populateDB(tx) {
     $('#busy').show();
-    alert('dropping table if exists');
-    //tx.executeSql('DROP TABLE IF EXISTS DEMO');
 	tx.executeSql('DROP TABLE IF EXISTS employee');
 	var sql = 
 		"CREATE TABLE IF NOT EXISTS employee ( "+
