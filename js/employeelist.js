@@ -85,7 +85,7 @@ function onDeviceReady() {
     //alert('Loading Employees');
     db.transaction(getEmployees, getEmployees_error);
 
-    alert('after attempt to load employees');
+    //alert('after attempt to load employees');
 /*
     if (dbJustCreated) {
         alert('Try loading Employees again');
