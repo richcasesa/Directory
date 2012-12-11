@@ -95,4 +95,3 @@ function onDeviceReady() {
 }
 
 document.addEventListener("deviceready", onDeviceReady, false);
-s
