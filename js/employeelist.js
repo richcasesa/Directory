@@ -2,11 +2,16 @@ var db;
 var dbJustCreated = false;
     
 var scroll = new iScroll('wrapper', { vScrollbar: false, hScrollbar:false, hScroll: false });
+document.addEventListener("deviceready", onDeviceReady, false);
+
+function onDeviceReady() {
+    db = window.openDatabase("DirectoryDB", "1.0", "Directory", 400000);
+    db.transaction(getEmployees, getEmployees_error);
+}
 
 function getEmployees_error(tx, error) {
     $('#busy').hide();
-    //alert("Error reading db: " + error);
-    //alert('Recreating Database');
+    console.log("Error reading db: " + error);
     db.transaction(populateDB, transaction_error, populateDB_success);
 }
 
@@ -17,12 +22,12 @@ function transaction_error(tx, error) {
 }
 
 function populateDB_success() {
-	dbJustCreated = true;
-    //alert('Try loading Employees after loading employees');
+    console.log('Successfully populated Employees');
     db.transaction(getEmployees, getEmployees_error);
 }
 
 function getEmployees(tx) {
+    console.log('Loading employees');
 	var sql = "select e.id, e.firstName, e.lastName, e.title, e.picture, count(r.id) reportCount " + 
 				"from employee e left join employee r on r.managerId = e.id " +
 				"group by e.id order by e.lastName, e.firstName";
@@ -48,6 +53,7 @@ function getEmployees_success(tx, results) {
 
 function populateDB(tx) {
     $('#busy').show();
+    console.log('Recreating employee table');
 	tx.executeSql('DROP TABLE IF EXISTS employee');
 	var sql = 
 		"CREATE TABLE IF NOT EXISTS employee ( "+
@@ -62,9 +68,8 @@ function populateDB(tx) {
 		"cellPhone VARCHAR(30), " +
 		"email VARCHAR(30), " +
 		"picture VARCHAR(200))";
-    //alert("Creating table");
     tx.executeSql(sql);
-    //alert('Adding Employees');
+    console.log('Adding Employees');
     
     tx.executeSql("INSERT INTO employee (id,firstName,lastName,managerId,title,department,officePhone,cellPhone,email,city,picture) VALUES (12,'Steven','Wells',4,'Software Architect','Engineering','617-000-0012','781-000-0012','swells@fakemail.com','Boston, MA','steven_wells.jpg')");
     tx.executeSql("INSERT INTO employee (id,firstName,lastName,managerId,title,department,officePhone,cellPhone,email,city,picture) VALUES (11,'Amy','Jones',5,'Sales Representative','Sales','617-000-0011','781-000-0011','ajones@fakemail.com','Boston, MA','amy_jones.jpg')");
@@ -80,18 +85,3 @@ function populateDB(tx) {
     tx.executeSql("INSERT INTO employee (id,firstName,lastName,managerId,title,department,officePhone,cellPhone,email,city,picture) VALUES (1,'James','King',0,'President and CEO','Corporate','617-000-0001','781-000-0001','jking@fakemail.com','Boston, MA','james_king.jpg')");
 }
 
-function onDeviceReady() {
-    db = window.openDatabase("DirectoryDB", "1.0", "Directory", 400000);
-    //alert('Loading Employees');
-    db.transaction(getEmployees, getEmployees_error);
-
-    //alert('after attempt to load employees');
-/*
-    if (dbJustCreated) {
-        alert('Try loading Employees again');
-        db.transaction(getEmployees, getEmployees_error);
-    }
-*/
-}
-
-document.addEventListener("deviceready", onDeviceReady, false);
