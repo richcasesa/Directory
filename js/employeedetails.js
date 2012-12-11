@@ -7,9 +7,9 @@ var db;
 document.addEventListener("deviceready", onDeviceReady, false);
 
 function onDeviceReady() {
-	alert("Opening database");
+	console.log("Opening database");
     db = window.openDatabase("DirectoryDB", "1.0", "Directory", 200000);
-	alert("Database opened");
+	console.log("Database opened");
     db.transaction(getEmployee, transaction_error);
 }
 
@@ -29,7 +29,7 @@ function getEmployee(tx) {
 
 function getEmployee_success(tx, results) {
 	$('#busy').hide();
-    alert('Got data for employee');
+    console.log('Got data for employee');
 	var employee = results.rows.item(0);
 	$('#employeePic').attr('src', 'pics/' + employee.picture);
 	$('#fullName').text(employee.firstName + ' ' + employee.lastName);
