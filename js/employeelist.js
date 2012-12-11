@@ -5,8 +5,8 @@ var scroll = new iScroll('wrapper', { vScrollbar: false, hScrollbar:false, hScro
 
 function getEmployees_error(tx, error) {
     $('#busy').hide();
-    alert("Error reading db: " + error);
-    alert('Recreating Database');
+    //alert("Error reading db: " + error);
+    //alert('Recreating Database');
     db.transaction(populateDB, transaction_error, populateDB_success);
 }
 
@@ -18,7 +18,7 @@ function transaction_error(tx, error) {
 
 function populateDB_success() {
 	dbJustCreated = true;
-    alert('Try loading Employees after loading employees');
+    //alert('Try loading Employees after loading employees');
     db.transaction(getEmployees, getEmployees_error);
 }
 
@@ -82,7 +82,7 @@ function populateDB(tx) {
 
 function onDeviceReady() {
     db = window.openDatabase("DirectoryDB", "1.0", "Directory", 400000);
-    alert('Loading Employees');
+    //alert('Loading Employees');
     db.transaction(getEmployees, getEmployees_error);
 
     alert('after attempt to load employees');
@@ -95,3 +95,4 @@ function onDeviceReady() {
 }
 
 document.addEventListener("deviceready", onDeviceReady, false);
+s
