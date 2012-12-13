@@ -90,7 +90,7 @@ function setupDB(tx) {
 		employees = data.items;
 		$.each(employees, function(index, employee) {
 			alert(employee.lastName);
-			tx.executeSql("INSERT INTO employee (id,firstName,lastName,managerId,title,department,officePhone,cellPhone,email,city,picture) VALUES (?,?,?,?,?,?,?,?,?,?,?)", [employee.id,employee.firstName,employee.lastName,employee.managerId, employee.title,employee.department,employee.officePhone,employee.cellPhone,employee.email,employee.city,employee.picture]);
+			tx.executeSql("INSERT INTO employee (id,firstName,lastName,managerId,title,department,officePhone,cellPhone,email,city,picture) VALUES (?,?,?,?,?,?,?,?,?,?,?)", [employee.id,employee.firstName,employee.lastName,employee.managerId,employee.title,employee.department,employee.officePhone,employee.cellPhone,employee.email,employee.city,'steven_wells.jpg']);
 		});
 		$('#employeeList').listview('refresh');
 
