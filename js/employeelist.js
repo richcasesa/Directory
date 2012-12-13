@@ -29,7 +29,6 @@ function getRemoteData() {
 		$.each(employees, function(index, employee) {
 			alert(employee.lastName);
 			$('#employeeList').append('<li><a href="employeedetails.html?id=' + employee.id + '">' +
-					'<img src="pics/' + employee.picture + '"/>' +
 					'<h4>' + employee.firstName + ' ' + employee.lastName + '</h4>' +
 					'<p>' + employee.title + '</p>' +
 					'<span class="ui-li-count">' + employee.reportCount + '</span></a></li>');
