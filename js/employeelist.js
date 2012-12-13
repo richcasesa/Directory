@@ -1,32 +1,33 @@
 var db;
-var dbJustCreated = false;
+var serviceURL = "../services/"; // relative to html file
     
 var scroll = new iScroll('wrapper', { vScrollbar: false, hScrollbar:false, hScroll: false });
 document.addEventListener("deviceready", onDeviceReady, false);
 
+function checkConnection() {
+    var networkState = navigator.network.connection.type;
+
+    var states = {};
+    states[Connection.UNKNOWN]  = 'Unknown connection';
+    states[Connection.ETHERNET] = 'Ethernet connection';
+    states[Connection.WIFI]     = 'WiFi connection';
+    states[Connection.CELL_2G]  = 'Cell 2G connection';
+    states[Connection.CELL_3G]  = 'Cell 3G connection';
+    states[Connection.CELL_4G]  = 'Cell 4G connection';
+    states[Connection.NONE]     = 'No network connection';
+
+    alert('Connection type: ' + states[networkState]);
+}
+
 function onDeviceReady() {
+	// open database and load employees when Cordova is ready
+	checkConnection();
     db = window.openDatabase("DirectoryDB", "1.0", "Directory", 400000);
     db.transaction(getEmployees, getEmployees_error);
 }
 
-function getEmployees_error(tx, error) {
-    $('#busy').hide();
-    console.log("Error reading db: " + error);
-    db.transaction(populateDB, transaction_error, populateDB_success);
-}
-
-function transaction_error(tx, error) {
-	$('#busy').hide();
-    alert("Database Error: " + error);
-    alert('Error Code: ' + error.code);
-}
-
-function populateDB_success() {
-    console.log('Successfully populated Employees');
-    db.transaction(getEmployees, getEmployees_error);
-}
-
 function getEmployees(tx) {
+	// query DB and return results to getEmployees_success
     console.log('Loading employees');
 	var sql = "select e.id, e.firstName, e.lastName, e.title, e.picture, count(r.id) reportCount " + 
 				"from employee e left join employee r on r.managerId = e.id " +
@@ -35,6 +36,7 @@ function getEmployees(tx) {
 }
 
 function getEmployees_success(tx, results) {
+	// hide busy label and add employees to list
 	$('#busy').hide();
     var len = results.rows.length;
     for (var i=0; i<len; i++) {
@@ -48,10 +50,17 @@ function getEmployees_success(tx, results) {
 	setTimeout(function(){
 		scroll.refresh();
 	},100);
+	// done with db, free up memory
     db = null;
 }
 
-function populateDB(tx) {
+function getEmployees_error(tx, error) {
+	// loading employees failed, recreate and populate employee table
+    console.log("Error reading db: " + error);
+    db.transaction(setupDB, setupDB_error, setupDB_success);
+}
+
+function setupDB(tx) {
     $('#busy').show();
     console.log('Recreating employee table');
 	tx.executeSql('DROP TABLE IF EXISTS employee');
@@ -85,3 +94,54 @@ function populateDB(tx) {
     tx.executeSql("INSERT INTO employee (id,firstName,lastName,managerId,title,department,officePhone,cellPhone,email,city,picture) VALUES (1,'James','King',0,'President and CEO','Corporate','617-000-0001','781-000-0001','jking@fakemail.com','Boston, MA','james_king.jpg')");
 }
 
+function setupDB_error(tx, error) {
+	// DB Setup failed, hide busy label and show error
+	$('#busy').hide();
+    alert("Database Error: " + error);
+    alert('Error Code: ' + error.code);
+}
+
+function setupDB_success() {
+	// DB is now setup, try to load Employees again
+    console.log('Successfully populated Employees');
+    db.transaction(getEmployees, getEmployees_error);
+}
+
+function getRemoteData() {
+	$.getJSON(serviceURL + 'getemployees.php', function(data) {
+		$('#employeeList li').remove();
+		employees = data.items;
+
+		$.each(employees, function(index, employee) {
+			$('#employeeList').append('<li><a href="employeedetails.html?id=' + employee.id + '">' +
+					'<img src="pics/' + employee.picture + '"/>' +
+					'<h4>' + employee.firstName + ' ' + employee.lastName + '</h4>' +
+					'<p>' + employee.title + '</p>' +
+					'<span class="ui-li-count">' + employee.reportCount + '</span></a></li>');
+		});
+		$('#employeeList').listview('refresh');
+
+	});
+};
+
+/*
+
+function PwClient(){
+	//var SERVER = "http://192.168.1.118/firmdirectory/";  // mac book at home
+	//var SERVER = "http://10.95.118.125/FirmDir/";  // dev apache server at work
+	var SERVER = "https://pwmobiledata.paulweiss.com/firmdirectory/"; // external server at work	
+	var LoginRequired = true;
+	 	
+    var CREDENTIALS = 'Basic ' + Ti.Utils.base64encode("pwmobile-iis:Th#25mZ7!k"); // credentials for external server
+	
+	var client = Titanium.Network.createHTTPClient();
+	client.setTimeout(10000);
+	client.getPWFile = function(fname){
+		client.open('GET', SERVER + fname, true);
+		Ti.API.log('info', 'opening connection to ' + "https://pwmobiledata.paulweiss.com/firmdirectory/" + fname);
+		if (LoginRequired) client.setRequestHeader('Authorization',CREDENTIALS);
+	};
+	return client;	
+};
+
+*/
