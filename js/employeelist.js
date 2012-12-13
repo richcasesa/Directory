@@ -16,8 +16,8 @@ function getEmployees(tx) {
 	var sql = "select e.id, e.firstName, e.lastName, e.title, e.picture, count(r.id) reportCount " + 
 				"from employee e left join employee r on r.managerId = e.id " +
 				"group by e.id order by e.lastName, e.firstName";
-	//tx.executeSql(sql, [], getEmployees_success);
-	tx.executeSql(sql, [], getRemoteData);
+	tx.executeSql(sql, [], getEmployees_success);
+	//tx.executeSql(sql, [], getRemoteData);
 }
 
 function getRemoteData() {
@@ -25,7 +25,6 @@ function getRemoteData() {
 	$.getJSON('http://coenraets.org/apps/directory/services/getemployees.php', function(data) {
 		//$('#employeeList li').remove();
 		employees = data.items;
-		alert(employees);
 		$.each(employees, function(index, employee) {
 			alert(employee.lastName);
 			$('#employeeList').append('<li><a href="employeedetails.html?id=' + employee.id + '">' +
@@ -85,7 +84,18 @@ function setupDB(tx) {
 		"picture VARCHAR(200))";
     tx.executeSql(sql);
     console.log('Adding Employees');
-    
+
+	$.getJSON('http://coenraets.org/apps/directory/services/getemployees.php', function(data) {
+		//$('#employeeList li').remove();
+		employees = data.items;
+		$.each(employees, function(index, employee) {
+			alert(employee.lastName);
+			tx.executeSql("INSERT INTO employee (id,firstName,lastName,managerId,title,department,officePhone,cellPhone,email,city,picture) VALUES (?,?,?,?,?,?,?,?,?,?,?)", [employee.id,employee.firstName,employee.lastName,employee.managerId, employee.title,employee.department,employee.officePhone,employee.cellPhone,employee.email,employee.city,employee.picture]);
+		});
+		$('#employeeList').listview('refresh');
+
+	});
+/*    
     tx.executeSql("INSERT INTO employee (id,firstName,lastName,managerId,title,department,officePhone,cellPhone,email,city,picture) VALUES (12,'Steven','Wells',4,'Software Architect','Engineering','617-000-0012','781-000-0012','swells@fakemail.com','Boston, MA','steven_wells.jpg')");
     tx.executeSql("INSERT INTO employee (id,firstName,lastName,managerId,title,department,officePhone,cellPhone,email,city,picture) VALUES (11,'Amy','Jones',5,'Sales Representative','Sales','617-000-0011','781-000-0011','ajones@fakemail.com','Boston, MA','amy_jones.jpg')");
     tx.executeSql("INSERT INTO employee (id,firstName,lastName,managerId,title,department,officePhone,cellPhone,email,city,picture) VALUES (10,'Kathleen','Byrne',5,'Sales Representative','Sales','617-000-0010','781-000-0010','kbyrne@fakemail.com','Boston, MA','kathleen_byrne.jpg')");
@@ -98,6 +108,7 @@ function setupDB(tx) {
     tx.executeSql("INSERT INTO employee (id,firstName,lastName,managerId,title,department,officePhone,cellPhone,email,city,picture) VALUES (4,'John','Williams',1,'VP of Engineering','Engineering','617-000-0004','781-000-0004','jwilliams@fakemail.com','Boston, MA','john_williams.jpg')");
     tx.executeSql("INSERT INTO employee (id,firstName,lastName,managerId,title,department,officePhone,cellPhone,email,city,picture) VALUES (2,'Julie','Taylor',1,'VP of Marketing','Marketing','617-000-0002','781-000-0002','jtaylor@fakemail.com','Boston, MA','julie_taylor.jpg')");
     tx.executeSql("INSERT INTO employee (id,firstName,lastName,managerId,title,department,officePhone,cellPhone,email,city,picture) VALUES (1,'James','King',0,'President and CEO','Corporate','617-000-0001','781-000-0001','jking@fakemail.com','Boston, MA','james_king.jpg')");
+*/
 }
 
 function setupDB_error(tx, error) {
