@@ -4,25 +4,9 @@ var serviceURL = "../services/"; // relative to html file
 var scroll = new iScroll('wrapper', { vScrollbar: false, hScrollbar:false, hScroll: false });
 document.addEventListener("deviceready", onDeviceReady, false);
 
-function checkConnection() {
-    var networkState = navigator.network.connection.type;
-
-    var states = {};
-    states[Connection.UNKNOWN]  = 'Unknown connection';
-    states[Connection.ETHERNET] = 'Ethernet connection';
-    states[Connection.WIFI]     = 'WiFi connection';
-    states[Connection.CELL_2G]  = 'Cell 2G connection';
-    states[Connection.CELL_3G]  = 'Cell 3G connection';
-    states[Connection.CELL_4G]  = 'Cell 4G connection';
-    states[Connection.NONE]     = 'No network connection';
-
-    alert('Connection type: ' + states[networkState]);
-}
-
 function onDeviceReady() {
 	// open database and load employees when Cordova is ready
-	checkConnection();
-    db = window.openDatabase("DirectoryDB", "1.0", "Directory", 400000);
+    db = window.openDatabase("DirectoryDB", "1.0", "Directory", 400000);	
     db.transaction(getEmployees, getEmployees_error);
 }
 
@@ -32,8 +16,31 @@ function getEmployees(tx) {
 	var sql = "select e.id, e.firstName, e.lastName, e.title, e.picture, count(r.id) reportCount " + 
 				"from employee e left join employee r on r.managerId = e.id " +
 				"group by e.id order by e.lastName, e.firstName";
-	tx.executeSql(sql, [], getEmployees_success);
+	//tx.executeSql(sql, [], getEmployees_success);
+	tx.executeSql(sql, [], getRemoteData);
 }
+
+function getRemoteData() {
+	alert('in getRemoteData');
+	$.getJSON('http://coenraets.org/apps/directory/services/getemployees.php', function(data) {
+		//$('#employeeList li').remove();
+		employees = data.items;
+		alert(employees);
+		$.each(employees, function(index, employee) {
+			alert(employee.lastName);
+			$('#employeeList').append('<li><a href="employeedetails.html?id=' + employee.id + '">' +
+					'<img src="pics/' + employee.picture + '"/>' +
+					'<h4>' + employee.firstName + ' ' + employee.lastName + '</h4>' +
+					'<p>' + employee.title + '</p>' +
+					'<span class="ui-li-count">' + employee.reportCount + '</span></a></li>');
+		});
+		$('#employeeList').listview('refresh');
+
+	});
+	setTimeout(function(){
+		scroll.refresh();
+	},100);
+};
 
 function getEmployees_success(tx, results) {
 	// hide busy label and add employees to list
@@ -107,23 +114,6 @@ function setupDB_success() {
     db.transaction(getEmployees, getEmployees_error);
 }
 
-function getRemoteData() {
-	$.getJSON(serviceURL + 'getemployees.php', function(data) {
-		$('#employeeList li').remove();
-		employees = data.items;
-
-		$.each(employees, function(index, employee) {
-			$('#employeeList').append('<li><a href="employeedetails.html?id=' + employee.id + '">' +
-					'<img src="pics/' + employee.picture + '"/>' +
-					'<h4>' + employee.firstName + ' ' + employee.lastName + '</h4>' +
-					'<p>' + employee.title + '</p>' +
-					'<span class="ui-li-count">' + employee.reportCount + '</span></a></li>');
-		});
-		$('#employeeList').listview('refresh');
-
-	});
-};
-
 /*
 
 function PwClient(){
@@ -145,3 +135,18 @@ function PwClient(){
 };
 
 */
+
+function checkConnection() {
+    var networkState = navigator.network.connection.type;
+
+    var states = {};
+    states[Connection.UNKNOWN]  = 'Unknown connection';
+    states[Connection.ETHERNET] = 'Ethernet connection';
+    states[Connection.WIFI]     = 'WiFi connection';
+    states[Connection.CELL_2G]  = 'Cell 2G connection';
+    states[Connection.CELL_3G]  = 'Cell 3G connection';
+    states[Connection.CELL_4G]  = 'Cell 4G connection';
+    states[Connection.NONE]     = 'No network connection';
+
+    alert('Connection type: ' + states[networkState]);
+}
