@@ -123,7 +123,7 @@ function setupDB_success() {
 				'<p class="line2">' + employee.title + '</p>' +
 				'<span class="bubble">' + employee.reportCount + '</span></a></li>');
 				
-				tx.executeSql("INSERT INTO employee (id,firstName,lastName,managerId,title,department,officePhone,cellPhone,email,city,picture) VALUES (?,?,?,?,?,?,?,?,?,?,?)", [employee.id,employee.firstName,employee.lastName,employee.managerId,employee.title,employee.department,employee.officePhone,employee.cellPhone,employee.email,employee.city,'steven_wells.jpg']);
+//				tx.executeSql("INSERT INTO employee (id,firstName,lastName,managerId,title,department,officePhone,cellPhone,email,city,picture) VALUES (?,?,?,?,?,?,?,?,?,?,?)", [employee.id,employee.firstName,employee.lastName,employee.managerId,employee.title,employee.department,employee.officePhone,employee.cellPhone,employee.email,employee.city,'steven_wells.jpg']);
 			});
 		});
 		$('#employeeList').listview('refresh');
