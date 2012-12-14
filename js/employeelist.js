@@ -1,12 +1,10 @@
 var db;
-var serviceURL = "../services/"; // relative to html file
-    
 var scroll = new iScroll('wrapper', { vScrollbar: false, hScrollbar:false, hScroll: false });
 document.addEventListener("deviceready", onDeviceReady, false);
 
 function onDeviceReady() {
 	// open database and load employees when Cordova is ready
-    db = window.openDatabase("DirectoryDB", "1.0", "Directory", 400000);	
+    db = window.openDatabase("DirectoryDB", "1.0", "Directory", 400000);
     db.transaction(getEmployees, getEmployees_error);
 }
 
@@ -19,7 +17,7 @@ function getEmployees(tx) {
 	tx.executeSql(sql, [], getEmployees_success);
 	//tx.executeSql(sql, [], getRemoteData);
 }
-
+/*
 function getRemoteData() {
 	alert('in getRemoteData');
 	$.getJSON('http://coenraets.org/apps/directory/services/getemployees.php', function(data) {
@@ -39,6 +37,7 @@ function getRemoteData() {
 		scroll.refresh();
 	},100);
 };
+*/
 
 function getEmployees_success(tx, results) {
 	// hide busy label and add employees to list
@@ -60,7 +59,7 @@ function getEmployees_success(tx, results) {
 }
 
 function getEmployees_error(tx, error) {
-	// loading employees failed, recreate and populate employee table
+	// loading employees failed, recreate table, and let setupDB_success populate employee table
     console.log("Error reading db: " + error);
     db.transaction(setupDB, setupDB_error, setupDB_success);
 }
@@ -83,19 +82,8 @@ function setupDB(tx) {
 		"email VARCHAR(30), " +
 		"picture VARCHAR(200))";
     tx.executeSql(sql);
-    console.log('Adding Employees');
-
-	$.getJSON('http://coenraets.org/apps/directory/services/getemployees.php', function(data) {
-		//$('#employeeList li').remove();
-		employees = data.items;
-		$.each(employees, function(index, employee) {
-			alert(employee.lastName);
-			tx.executeSql("INSERT INTO employee (id,firstName,lastName,managerId,title,department,officePhone,cellPhone,email,city,picture) VALUES (?,?,?,?,?,?,?,?,?,?,?)", [employee.id,employee.firstName,employee.lastName,employee.managerId,employee.title,employee.department,employee.officePhone,employee.cellPhone,employee.email,employee.city,'steven_wells.jpg']);
-		});
-		$('#employeeList').listview('refresh');
-
-	});
 /*    
+	console.log('Adding Employees');
     tx.executeSql("INSERT INTO employee (id,firstName,lastName,managerId,title,department,officePhone,cellPhone,email,city,picture) VALUES (12,'Steven','Wells',4,'Software Architect','Engineering','617-000-0012','781-000-0012','swells@fakemail.com','Boston, MA','steven_wells.jpg')");
     tx.executeSql("INSERT INTO employee (id,firstName,lastName,managerId,title,department,officePhone,cellPhone,email,city,picture) VALUES (11,'Amy','Jones',5,'Sales Representative','Sales','617-000-0011','781-000-0011','ajones@fakemail.com','Boston, MA','amy_jones.jpg')");
     tx.executeSql("INSERT INTO employee (id,firstName,lastName,managerId,title,department,officePhone,cellPhone,email,city,picture) VALUES (10,'Kathleen','Byrne',5,'Sales Representative','Sales','617-000-0010','781-000-0010','kbyrne@fakemail.com','Boston, MA','kathleen_byrne.jpg')");
@@ -121,7 +109,27 @@ function setupDB_error(tx, error) {
 function setupDB_success() {
 	// DB is now setup, try to load Employees again
     console.log('Successfully populated Employees');
-    db.transaction(getEmployees, getEmployees_error);
+	
+	$.getJSON('http://coenraets.org/apps/directory/services/getemployees.php', function(data) {
+		//$('#employeeList li').remove();
+		employees = data.items;
+		$.each(employees, function(index, employee) {
+			db.transaction(function(tx){
+				alert(employee.lastName);
+				
+				$('#employeeList').append('<li><a href="employeedetails.html?id=' + employee.id + '">' +
+				'<img src="pics/' + employee.picture + '" class="list-icon"/>' +
+				'<p class="line1">' + employee.firstName + ' ' + employee.lastName + '</p>' +
+				'<p class="line2">' + employee.title + '</p>' +
+				'<span class="bubble">' + employee.reportCount + '</span></a></li>');
+				
+				tx.executeSql("INSERT INTO employee (id,firstName,lastName,managerId,title,department,officePhone,cellPhone,email,city,picture) VALUES (?,?,?,?,?,?,?,?,?,?,?)", [employee.id,employee.firstName,employee.lastName,employee.managerId,employee.title,employee.department,employee.officePhone,employee.cellPhone,employee.email,employee.city,'steven_wells.jpg']);
+			});
+		});
+		$('#employeeList').listview('refresh');
+
+	});
+    //db.transaction(getEmployees, getEmployees_error);
 }
 
 /*
